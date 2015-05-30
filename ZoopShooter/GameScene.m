@@ -88,7 +88,7 @@
     self.scaleMode = SKSceneScaleModeAspectFit;
     
     SKShapeNode *cannon = [self newCannon];
-    cannon.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetHeight(cannon.frame));
+    cannon.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetHeight(cannon.frame) / 2);
     [self addChild:cannon];
 }
 
