@@ -10,7 +10,8 @@
 
 @interface GameScene ()
 @property BOOL contentCreated;
-@property CGFloat angle;
+@property SKNode *cannon;
+@property CGPoint startingPoint;
 @end
 
 @implementation GameScene
@@ -21,26 +22,11 @@
         
         [self createSceneContents];
         
-        self.angle = 0;
-        
-        UISwipeGestureRecognizer *recognizer1 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
-        recognizer1.direction = UISwipeGestureRecognizerDirectionUp;
-        [[self view] addGestureRecognizer:recognizer1];
-        
-        UISwipeGestureRecognizer *recognizer2 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
-        recognizer2.direction = UISwipeGestureRecognizerDirectionDown;
-        [[self view] addGestureRecognizer:recognizer2];
-        
-        UISwipeGestureRecognizer *recognizer3 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
-        recognizer3.direction = UISwipeGestureRecognizerDirectionLeft;
-        [[self view] addGestureRecognizer:recognizer3];
-        
-        UISwipeGestureRecognizer *recognizer4 = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
-        recognizer4.direction = UISwipeGestureRecognizerDirectionRight;
-        [[self view] addGestureRecognizer:recognizer4];
-        
         UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
         [[self view] addGestureRecognizer:tapRecognizer];
+        
+        UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
+        [[self view] addGestureRecognizer:panRecognizer];
         
         self.contentCreated = YES;
     }
@@ -80,16 +66,50 @@
 - (void)handleTap:(UITapGestureRecognizer *)sender {
 
     NSLog(@"%@", NSStringFromSelector(_cmd));
+    
+    if (fabs(self.cannon.physicsBody.angularVelocity) > 0) {
+        self.cannon.physicsBody.angularVelocity = 0;
+    }
+}
+
+- (void)handlePan:(UIPanGestureRecognizer *)sender {
+    
+    NSLog(@"%@", NSStringFromSelector(_cmd));
+    
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        
+        CGPoint location = [sender locationInView:self.view];
+        location = [self convertPointFromView:location];
+        CGFloat dx = location.x - self.cannon.position.x;
+        CGFloat dy = location.y = self.cannon.position.y;
+        self.startingPoint = CGPointMake(dx, dy);
+        
+    } else if (sender.state == UIGestureRecognizerStateEnded) {
+        
+        CGPoint location = [sender locationInView:self.view];
+        location = [self convertPointFromView:location];
+        CGFloat dx = location.x - self.cannon.position.x;
+        CGFloat dy = location.y = self.cannon.position.y;
+        CGFloat direction = sin(self.startingPoint.x * dy - self.startingPoint.y * dx);
+
+        NSLog(@"direction: %f", direction);
+        
+        dx = [sender velocityInView:self.view].x;
+        dy = [sender velocityInView:self.view].y;
+        CGFloat speed = sqrt(dx*dx + dy*dy);
+        [self.cannon.physicsBody applyAngularImpulse:speed * direction];
+    }
 }
 
 - (void)createSceneContents {
     
     self.backgroundColor = [SKColor blackColor];
     self.scaleMode = SKSceneScaleModeAspectFit;
+    self.physicsWorld.gravity = CGVectorMake(0,0); // disable gravity
     
-    SKShapeNode *cannon = [self newCannon];
-    cannon.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetHeight(cannon.frame) / 2);
-    [self addChild:cannon];
+    self.cannon = [self newCannon];
+    self.cannon.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetHeight(self.cannon.frame) / 2);
+    [self addChild:self.cannon];
 }
 
 - (SKShapeNode *)newCannon {
@@ -98,8 +118,11 @@
     wheel.fillColor = [UIColor grayColor];
     wheel.strokeColor = [UIColor grayColor];
     wheel.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:50];
-//    wheel.physicsBody.dynamic = NO;
     wheel.physicsBody.affectedByGravity = NO;
+    wheel.physicsBody.angularDamping = 0.9;
+    wheel.physicsBody.mass = 1000;
+    
+    NSLog(@"cannon mass:  %f", wheel.physicsBody.mass);
     
     SKSpriteNode *light1 = [self newLight];
     light1.position = CGPointMake(0, 40);
@@ -111,12 +134,6 @@
 - (SKSpriteNode *)newLight {
     
     SKSpriteNode *light = [[SKSpriteNode alloc] initWithColor:[SKColor yellowColor] size:CGSizeMake(8,8)];
-    
-    SKAction *blink = [SKAction sequence:@[
-                                           [SKAction fadeOutWithDuration:1.0],
-                                           [SKAction fadeInWithDuration:1.0]]];
-    SKAction *blinkForever = [SKAction repeatActionForever:blink];
-    [light runAction: blinkForever];
     
     return light;
 }
