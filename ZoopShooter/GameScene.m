@@ -25,26 +25,24 @@
         UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
         [[self view] addGestureRecognizer:tapRecognizer];
         
-        UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)];
-        [[self view] addGestureRecognizer:panRecognizer];
-        
         self.contentCreated = YES;
     }
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    
-    NSLog(@"%@", NSStringFromSelector(_cmd));
-}
-
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     
+    if (touches.count != 1)
+        return;
+    
     NSLog(@"%@, %lu", NSStringFromSelector(_cmd), (unsigned long)touches.count);
-}
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-
-    NSLog(@"%@", NSStringFromSelector(_cmd));
+    
+    UITouch *touch = [touches anyObject];
+    CGPoint location = [touch locationInNode:self];
+    
+    float dY = self.cannon.position.y - location.y;
+    float dX = self.cannon.position.x - location.x;
+    float angle = (atan2f(dY, dX)) + 1.571f;
+    self.cannon.zRotation = angle;
 }
 
 - (void)handleSwipe:(UISwipeGestureRecognizer *)sender {
@@ -69,35 +67,6 @@
     
     if (fabs(self.cannon.physicsBody.angularVelocity) > 0) {
         self.cannon.physicsBody.angularVelocity = 0;
-    }
-}
-
-- (void)handlePan:(UIPanGestureRecognizer *)sender {
-    
-    NSLog(@"%@", NSStringFromSelector(_cmd));
-    
-    if (sender.state == UIGestureRecognizerStateBegan) {
-        
-        CGPoint location = [sender locationInView:self.view];
-        location = [self convertPointFromView:location];
-        CGFloat dx = location.x - self.cannon.position.x;
-        CGFloat dy = location.y = self.cannon.position.y;
-        self.startingPoint = CGPointMake(dx, dy);
-        
-    } else if (sender.state == UIGestureRecognizerStateEnded) {
-        
-        CGPoint location = [sender locationInView:self.view];
-        location = [self convertPointFromView:location];
-        CGFloat dx = location.x - self.cannon.position.x;
-        CGFloat dy = location.y = self.cannon.position.y;
-        CGFloat direction = sin(self.startingPoint.x * dy - self.startingPoint.y * dx);
-
-        NSLog(@"direction: %f", direction);
-        
-        dx = [sender velocityInView:self.view].x;
-        dy = [sender velocityInView:self.view].y;
-        CGFloat speed = sqrt(dx*dx + dy*dy);
-        [self.cannon.physicsBody applyAngularImpulse:speed * direction];
     }
 }
 
