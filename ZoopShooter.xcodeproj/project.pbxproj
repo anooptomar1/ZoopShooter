@@ -14,6 +14,9 @@
 		C939803E1B1910DD00EC448A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C939803D1B1910DD00EC448A /* Images.xcassets */; };
 		C93980411B1910DD00EC448A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = C939803F1B1910DD00EC448A /* LaunchScreen.xib */; };
 		C939804D1B1910DD00EC448A /* ZoopShooterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C939804C1B1910DD00EC448A /* ZoopShooterTests.m */; };
+		C93980571B1910ED00EC448A /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C93980561B1910ED00EC448A /* SpriteKit.framework */; };
+		C939805A1B19123200EC448A /* StartScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = C93980591B19123200EC448A /* StartScreen.m */; };
+		C939805D1B19144F00EC448A /* GameScene.m in Sources */ = {isa = PBXBuildFile; fileRef = C939805C1B19144F00EC448A /* GameScene.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +43,11 @@
 		C93980461B1910DD00EC448A /* ZoopShooterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZoopShooterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C939804B1B1910DD00EC448A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C939804C1B1910DD00EC448A /* ZoopShooterTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZoopShooterTests.m; sourceTree = "<group>"; };
+		C93980561B1910ED00EC448A /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
+		C93980581B19123200EC448A /* StartScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartScreen.h; sourceTree = "<group>"; };
+		C93980591B19123200EC448A /* StartScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartScreen.m; sourceTree = "<group>"; };
+		C939805B1B19144F00EC448A /* GameScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameScene.h; sourceTree = "<group>"; };
+		C939805C1B19144F00EC448A /* GameScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameScene.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C93980571B1910ED00EC448A /* SpriteKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +72,7 @@
 		C93980241B1910DD00EC448A = {
 			isa = PBXGroup;
 			children = (
+				C93980561B1910ED00EC448A /* SpriteKit.framework */,
 				C939802F1B1910DD00EC448A /* ZoopShooter */,
 				C93980491B1910DD00EC448A /* ZoopShooterTests */,
 				C939802E1B1910DD00EC448A /* Products */,
@@ -86,6 +96,10 @@
 				C93980371B1910DD00EC448A /* ViewController.h */,
 				C93980381B1910DD00EC448A /* ViewController.m */,
 				C939803A1B1910DD00EC448A /* Main.storyboard */,
+				C93980581B19123200EC448A /* StartScreen.h */,
+				C93980591B19123200EC448A /* StartScreen.m */,
+				C939805B1B19144F00EC448A /* GameScene.h */,
+				C939805C1B19144F00EC448A /* GameScene.m */,
 				C939803D1B1910DD00EC448A /* Images.xcassets */,
 				C939803F1B1910DD00EC448A /* LaunchScreen.xib */,
 				C93980301B1910DD00EC448A /* Supporting Files */,
@@ -221,6 +235,8 @@
 			files = (
 				C93980391B1910DD00EC448A /* ViewController.m in Sources */,
 				C93980361B1910DD00EC448A /* AppDelegate.m in Sources */,
+				C939805D1B19144F00EC448A /* GameScene.m in Sources */,
+				C939805A1B19123200EC448A /* StartScreen.m in Sources */,
 				C93980331B1910DD00EC448A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

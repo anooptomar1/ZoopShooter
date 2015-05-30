@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Tom Hartnett. All rights reserved.
 //
 
+#import <SpriteKit/SpriteKit.h>
+#import "StartScreen.h"
 #import "ViewController.h"
 
 @interface ViewController ()
@@ -15,13 +17,19 @@
 @implementation ViewController
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    SKView *spriteView = (SKView *)self.view;
+    spriteView.showsDrawCount = YES;
+    spriteView.showsNodeCount = YES;
+    spriteView.showsFPS = YES;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)viewWillAppear:(BOOL)animated {
+    
+    StartScreen* start = [[StartScreen alloc] initWithSize:CGSizeMake(768,1024)];
+    SKView *spriteView = (SKView *)self.view;
+    [spriteView presentScene: start];
 }
 
 @end
