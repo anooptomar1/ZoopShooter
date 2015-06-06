@@ -29,20 +29,50 @@
     }
 }
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    
+    if (touches.count != 1)
+        return;
+    
+    UITouch *touch = [touches anyObject];
+    CGPoint location = [touch locationInNode:self];
+    self.startingPoint = location;
+}
+
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     
     if (touches.count != 1)
         return;
     
-    NSLog(@"%@, %lu", NSStringFromSelector(_cmd), (unsigned long)touches.count);
+    if ([self.cannon hasActions])
+        return;
     
     UITouch *touch = [touches anyObject];
     CGPoint location = [touch locationInNode:self];
     
-    float dY = self.cannon.position.y - location.y;
-    float dX = self.cannon.position.x - location.x;
-    float angle = (atan2f(dY, dX)) + 1.571f;
-    self.cannon.zRotation = angle;
+    // Get deltaX & deltaY
+    CGFloat dx = self.startingPoint.x - location.x;
+    CGFloat dy = self.startingPoint.y - location.y;
+
+    CGFloat d;
+    if (fabs(dx) > fabs(dy)) {
+        // dx is bigger
+        d = dx;
+    } else {
+        // dy is bigger
+        d = dy;
+    }
+    
+    // Convert to radians
+    d = d * 0.0174532925;
+    
+    self.cannon.zRotation += d;
+    
+    self.startingPoint = location;
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    
 }
 
 - (void)handleSwipe:(UISwipeGestureRecognizer *)sender {
@@ -64,10 +94,6 @@
 - (void)handleTap:(UITapGestureRecognizer *)sender {
 
     NSLog(@"%@", NSStringFromSelector(_cmd));
-    
-    if (fabs(self.cannon.physicsBody.angularVelocity) > 0) {
-        self.cannon.physicsBody.angularVelocity = 0;
-    }
 }
 
 - (void)createSceneContents {
@@ -91,8 +117,6 @@
     wheel.physicsBody.angularDamping = 0.9;
     wheel.physicsBody.mass = 1000;
     
-    NSLog(@"cannon mass:  %f", wheel.physicsBody.mass);
-    
     SKSpriteNode *light1 = [self newLight];
     light1.position = CGPointMake(0, 40);
     [wheel addChild:light1];
@@ -105,6 +129,18 @@
     SKSpriteNode *light = [[SKSpriteNode alloc] initWithColor:[SKColor yellowColor] size:CGSizeMake(8,8)];
     
     return light;
+}
+
+- (SKShapeNode *)newMissile {
+    
+    SKShapeNode *missile = [SKShapeNode shapeNodeWithCircleOfRadius:5.0];
+    missile.fillColor = [UIColor redColor];
+    missile.strokeColor = [UIColor redColor];
+    missile.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:5.0];
+    missile.physicsBody.affectedByGravity = NO;
+    missile.physicsBody.mass = 100;
+    
+    return missile;
 }
 
 @end
