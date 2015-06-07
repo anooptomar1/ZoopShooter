@@ -50,24 +50,33 @@
     UITouch *touch = [touches anyObject];
     CGPoint location = [touch locationInNode:self];
     
-    // Get deltaX & deltaY
+    // Get deltaX and deltaY.
     CGFloat dx = self.startingPoint.x - location.x;
     CGFloat dy = self.startingPoint.y - location.y;
 
     CGFloat d;
     if (fabs(dx) > fabs(dy)) {
-        // dx is bigger
+        // dx is bigger.
         d = dx;
+        // Check where touch is in relation to cannon and rotate cannon appropriately.
+        if (location.y < self.cannon.position.y)
+            d *= -1;
+        
     } else {
-        // dy is bigger
+        // dy is bigger.
         d = dy;
+        // Check where touch is in relation to cannon and rotate cannon appropriately.
+        if (location.x > self.cannon.position.x)
+            d *= -1;
     }
     
-    // Convert to radians
+    // Convert to radians.
     d = d * 0.0174532925;
     
+    // Adjust cannon rotation.
     self.cannon.zRotation += d;
     
+    // Save location for next touchesMoved event.
     self.startingPoint = location;
 }
 
@@ -75,30 +84,37 @@
     
 }
 
-- (void)handleSwipe:(UISwipeGestureRecognizer *)sender {
+- (void)didSimulatePhysics {
     
-    // Down     = 8
-    // Up       = 4
-    // Left     = 2
-    // Right    = 1
-    
-    if (sender.state == UIGestureRecognizerStateEnded)
-    {
-        NSLog(@"%lu, %@ StateEnded", (unsigned long)sender.direction, NSStringFromSelector(_cmd));
-    } else {
-        
-        NSLog(@"%lu %@", (unsigned long)sender.direction, NSStringFromSelector(_cmd));
-    }
+    // Remove missiles that have flown off-screen.
+    [self enumerateChildNodesWithName:@"missile" usingBlock:^(SKNode *node, BOOL *stop) {
+        if (node.position.y < 0 || node.position.y > self.frame.size.height || node.position.x < 0 || node.position.x > self.frame.size.width) {
+            [node removeFromParent];
+        }
+    }];
 }
 
 - (void)handleTap:(UITapGestureRecognizer *)sender {
 
-    NSLog(@"%@", NSStringFromSelector(_cmd));
+    // Need to correct angle by PI/2 for some unknown reason.
+    CGFloat angle = self.cannon.zRotation + M_PI_2;
+    // Get new missile.
+    SKShapeNode *missile = [self newMissile];
+    // Calculate missile position as point on circle at appropriate angle.
+    CGFloat x = self.cannon.position.x + self.cannon.frame.size.width/2 * cos(angle);
+    CGFloat y = self.cannon.position.y + self.cannon.frame.size.height/2 * sin(angle);
+    missile.position = CGPointMake(x, y);
+    
+    NSLog(@"cx: %f, cy: %f, x: %f, y: %f, a: %f, cos(a): %f, sin(a): %f, w: %f, h: %f", self.cannon.position.x, self.cannon.position.y, x, y, angle, cos(angle), sin(angle), self.cannon.frame.size.width, self.cannon.frame.size.height);
+    
+    [self addChild:missile];
+    
+    [missile.physicsBody applyImpulse:CGVectorMake(100 * cos(angle), 100 * sin(angle))];
 }
 
 - (void)createSceneContents {
     
-    self.backgroundColor = [SKColor blackColor];
+    self.backgroundColor = [SKColor colorWithRed:78.0/255.0 green:10.0/255.0 blue:136.0/255.0 alpha:1.0];
     self.scaleMode = SKSceneScaleModeAspectFit;
     self.physicsWorld.gravity = CGVectorMake(0,0); // disable gravity
     
@@ -137,8 +153,12 @@
     missile.fillColor = [UIColor redColor];
     missile.strokeColor = [UIColor redColor];
     missile.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:5.0];
-    missile.physicsBody.affectedByGravity = NO;
-    missile.physicsBody.mass = 100;
+    missile.physicsBody.dynamic = YES;
+    missile.physicsBody.restitution = 0.0;
+    missile.physicsBody.linearDamping = 0.0;
+    missile.physicsBody.angularDamping = 0.0;
+    missile.physicsBody.mass = 1;
+    missile.name = @"missile";
     
     return missile;
 }
