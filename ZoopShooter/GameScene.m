@@ -12,7 +12,12 @@
 @property BOOL contentCreated;
 @property SKNode *cannon;
 @property CGPoint startingPoint;
+@property BOOL canFire;
 @end
+
+static const u_int32_t kMissileCategory = 0x1 << 0;
+static const u_int32_t kEnemyCategory   = 0x1 << 1;
+static const u_int32_t kCannonCategory  = 0x1 << 2;
 
 @implementation GameScene
 
@@ -24,6 +29,8 @@
         
         UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
         [[self view] addGestureRecognizer:tapRecognizer];
+        
+        self.physicsWorld.contactDelegate = self;
         
         self.contentCreated = YES;
     }
@@ -80,10 +87,6 @@
     self.startingPoint = location;
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    
-}
-
 - (void)didSimulatePhysics {
     
     // Remove missiles that have flown off-screen.
@@ -92,10 +95,52 @@
             [node removeFromParent];
         }
     }];
+    
+    [self enumerateChildNodesWithName:@"enemy" usingBlock:^(SKNode *node, BOOL *stop) {
+        if (node.position.y < 0 || node.position.y > self.frame.size.height || node.position.x < -50.0 || node.position.x > self.frame.size.width + 50.0) {
+            [node removeFromParent];
+        }
+    }];
+    
+    NSUInteger count = 0;
+    for (SKNode *node in [self children]) {
+        if ([node.name isEqualToString:@"enemy"]) {
+            count++;
+        }
+    }
+    
+    if (count == 0) {
+        
+        [self addNewEnemy];
+        [self addNewEnemy];
+        [self addNewEnemy];
+    }
+}
+
+- (void)didBeginContact:(SKPhysicsContact *)contact {
+    
+    if ([contact.bodyA.node.name isEqualToString:@"missile"]) {
+        [contact.bodyA.node removeFromParent];
+    }
+    
+    if ([contact.bodyB.node.name isEqualToString:@"missile"]) {
+        [contact.bodyB.node removeFromParent];
+    }
 }
 
 - (void)handleTap:(UITapGestureRecognizer *)sender {
+    
+    // Only fire cannon if cannon is loaded.
+    if (!self.canFire)
+        return;
 
+    // Only fire cannon if tapped on cannon.
+    CGPoint location = [sender locationInView:sender.view];
+    location = [self convertPointFromView:location];
+    SKShapeNode *cannon = (SKShapeNode *)[self childNodeWithName:@"cannon"];
+    if (![cannon containsPoint:location])
+        return;
+    
     // Need to correct angle by PI/2 for some unknown reason.
     CGFloat angle = self.cannon.zRotation + M_PI_2;
     // Get new missile.
@@ -104,12 +149,13 @@
     CGFloat x = self.cannon.position.x + self.cannon.frame.size.width/2 * cos(angle);
     CGFloat y = self.cannon.position.y + self.cannon.frame.size.height/2 * sin(angle);
     missile.position = CGPointMake(x, y);
-    
-    NSLog(@"cx: %f, cy: %f, x: %f, y: %f, a: %f, cos(a): %f, sin(a): %f, w: %f, h: %f", self.cannon.position.x, self.cannon.position.y, x, y, angle, cos(angle), sin(angle), self.cannon.frame.size.width, self.cannon.frame.size.height);
-    
+    // Add missile to scene.
     [self addChild:missile];
-    
-    [missile.physicsBody applyImpulse:CGVectorMake(100 * cos(angle), 100 * sin(angle))];
+    // Fire missile (apply impulse to it).
+    [missile.physicsBody applyImpulse:CGVectorMake(500 * cos(angle), 500 * sin(angle))];
+    // Reload cannon.
+    SKAction *cannonReloadSequence = [self getCannonReloadSequence];
+    [self runAction:cannonReloadSequence];
 }
 
 - (void)createSceneContents {
@@ -117,27 +163,43 @@
     self.backgroundColor = [SKColor colorWithRed:78.0/255.0 green:10.0/255.0 blue:136.0/255.0 alpha:1.0];
     self.scaleMode = SKSceneScaleModeAspectFit;
     self.physicsWorld.gravity = CGVectorMake(0,0); // disable gravity
+    self.physicsWorld.contactDelegate = self;
     
     self.cannon = [self newCannon];
     self.cannon.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetHeight(self.cannon.frame) / 2);
     [self addChild:self.cannon];
+
+    [self addNewEnemy];
+    [self addNewEnemy];
+    [self addNewEnemy];
+    
+    self.canFire = YES;
 }
 
 - (SKShapeNode *)newCannon {
     
-    SKShapeNode *wheel = [SKShapeNode shapeNodeWithCircleOfRadius:50];
-    wheel.fillColor = [UIColor grayColor];
-    wheel.strokeColor = [UIColor grayColor];
-    wheel.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:50];
-    wheel.physicsBody.affectedByGravity = NO;
-    wheel.physicsBody.angularDamping = 0.9;
-    wheel.physicsBody.mass = 1000;
+    SKShapeNode *cannon = [SKShapeNode shapeNodeWithCircleOfRadius:50];
+    cannon.name = @"cannon";
+    
+    // Setup appearance.
+    cannon.fillColor = [UIColor grayColor];
+    cannon.strokeColor = [UIColor grayColor];
+    
+    // Setup physics.
+    cannon.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:50];
+    cannon.physicsBody.affectedByGravity = NO;
+    cannon.physicsBody.angularDamping = 0.9;
+    cannon.physicsBody.mass = 1000;
+    // Set bit masks for collision detection.
+    cannon.physicsBody.categoryBitMask = kCannonCategory;
+    cannon.physicsBody.contactTestBitMask = 0x0;
+    cannon.physicsBody.collisionBitMask = 0x0;
     
     SKSpriteNode *light1 = [self newLight];
     light1.position = CGPointMake(0, 40);
-    [wheel addChild:light1];
+    [cannon addChild:light1];
     
-    return wheel;
+    return cannon;
 }
 
 - (SKSpriteNode *)newLight {
@@ -150,17 +212,90 @@
 - (SKShapeNode *)newMissile {
     
     SKShapeNode *missile = [SKShapeNode shapeNodeWithCircleOfRadius:5.0];
-    missile.fillColor = [UIColor redColor];
-    missile.strokeColor = [UIColor redColor];
+    missile.fillColor = [SKColor redColor];
+    missile.strokeColor = [SKColor redColor];
+    
     missile.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:5.0];
     missile.physicsBody.dynamic = YES;
+    missile.physicsBody.affectedByGravity = NO;
     missile.physicsBody.restitution = 0.0;
     missile.physicsBody.linearDamping = 0.0;
     missile.physicsBody.angularDamping = 0.0;
     missile.physicsBody.mass = 1;
     missile.name = @"missile";
-    
+    // Set bit masks for collision detection.
+    missile.physicsBody.categoryBitMask = kMissileCategory;
+    missile.physicsBody.contactTestBitMask = kEnemyCategory;
+    missile.physicsBody.collisionBitMask = kEnemyCategory;
+    missile.physicsBody.usesPreciseCollisionDetection = YES;
+
     return missile;
+}
+
+static inline CGFloat skRandf() {
+    return rand() / (CGFloat) RAND_MAX;
+}
+
+static inline CGFloat skRand(CGFloat low, CGFloat high) {
+    return skRandf() * (high - low) + low;
+}
+
+- (void)addNewEnemy {
+
+    SKNode *enemy = [self newEnemy];
+    CGFloat h = self.frame.size.height;
+    CGFloat y = skRand(h - 100, h - 500);
+    enemy.position = CGPointMake(-40.0, y);
+    [self addChild:enemy];
+    
+    CGFloat d = skRand(7.0, 10.0);
+    SKAction *sequence = [SKAction sequence:@[
+                                              [SKAction moveToX:self.size.width + 40 duration:d],
+                                              [SKAction moveToX:-40 duration:d]]];
+    SKAction *repeat = [SKAction repeatActionForever:sequence];
+    [enemy runAction:repeat];
+}
+
+- (SKShapeNode *)newEnemy {
+    
+    SKShapeNode *enemy = [SKShapeNode shapeNodeWithRectOfSize:CGSizeMake(40.0, 40.0)];
+    enemy.fillColor = [SKColor yellowColor];
+    enemy.strokeColor = [SKColor yellowColor];
+    enemy.physicsBody.dynamic = YES;
+    enemy.physicsBody.affectedByGravity = NO;
+    enemy.physicsBody.restitution = 0.0;
+    enemy.physicsBody.linearDamping = 0.0;
+    enemy.physicsBody.angularDamping = 0.0;
+    enemy.physicsBody.mass = 1;
+    enemy.name = @"enemy";
+    enemy.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(40.0, 40.0)];
+    
+    // Set bitmasks for collision detection.
+    enemy.physicsBody.categoryBitMask = kEnemyCategory;
+    enemy.physicsBody.contactTestBitMask = kMissileCategory;
+    enemy.physicsBody.collisionBitMask = kMissileCategory;
+    
+    return enemy;
+}
+
+- (SKAction *)getCannonReloadSequence {
+    
+    SKAction *cannonReloadSequence = [SKAction sequence:@[
+                                                  [SKAction runBlock:^{
+        SKShapeNode *cannon = (SKShapeNode *)self.cannon;
+        [cannon setFillColor:[SKColor blackColor]];
+        [cannon setStrokeColor:[SKColor blackColor]];
+        self.canFire = NO;
+    }],
+                                                  [SKAction waitForDuration:0.5],
+                                                  [SKAction runBlock:^{
+        SKShapeNode *cannon = (SKShapeNode *)self.cannon;
+        [cannon setFillColor:[SKColor grayColor]];
+        [cannon setStrokeColor:[SKColor grayColor]];
+        self.canFire = YES;
+    }]]];
+    
+    return cannonReloadSequence;
 }
 
 @end
