@@ -111,14 +111,16 @@ static const u_int32_t kCannonCategory  = 0x1 << 2;
     
     if (count == 0) {
         
-        [self addNewEnemy];
-        [self addNewEnemy];
-        [self addNewEnemy];
+        [self resetEnemies];
     }
 }
 
 - (void)didBeginContact:(SKPhysicsContact *)contact {
     
+}
+
+- (void)didEndContact:(SKPhysicsContact *)contact {
+
     if ([contact.bodyA.node.name isEqualToString:@"missile"]) {
         [contact.bodyA.node removeFromParent];
     }
@@ -168,12 +170,19 @@ static const u_int32_t kCannonCategory  = 0x1 << 2;
     self.cannon = [self newCannon];
     self.cannon.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetHeight(self.cannon.frame) / 2);
     [self addChild:self.cannon];
-
-    [self addNewEnemy];
-    [self addNewEnemy];
-    [self addNewEnemy];
+    
+    [self resetEnemies];
     
     self.canFire = YES;
+}
+
+- (void)resetEnemies {
+    
+    [self addNewEnemy];
+    [self addNewEnemy];
+    [self addNewEnemy];
+    [self addNewEnemy];
+    [self addNewEnemy];
 }
 
 - (SKShapeNode *)newCannon {
@@ -258,9 +267,21 @@ static inline CGFloat skRand(CGFloat low, CGFloat high) {
 
 - (SKShapeNode *)newEnemy {
     
-    SKShapeNode *enemy = [SKShapeNode shapeNodeWithRectOfSize:CGSizeMake(40.0, 40.0)];
-    enemy.fillColor = [SKColor yellowColor];
-    enemy.strokeColor = [SKColor yellowColor];
+//    SKShapeNode *enemy = [SKShapeNode shapeNodeWithRectOfSize:CGSizeMake(40.0, 40.0)];
+    CGFloat r = skRand(0.0, 100.0);
+    NSString *image;
+    if (r < 33.0) {
+        image = @"zoop_green.png";
+    } else if (r < 66.0) {
+        image = @"zoop_orange.png";
+    } else {
+        image = @"zoop_yellow.png";
+    }
+    
+    SKSpriteNode *enemy = [SKSpriteNode spriteNodeWithImageNamed:image];
+    enemy.size = CGSizeMake(40.0, 40.0);
+//    enemy.fillColor = [SKColor yellowColor];
+//    enemy.strokeColor = [SKColor yellowColor];
     enemy.physicsBody.dynamic = YES;
     enemy.physicsBody.affectedByGravity = NO;
     enemy.physicsBody.restitution = 0.0;

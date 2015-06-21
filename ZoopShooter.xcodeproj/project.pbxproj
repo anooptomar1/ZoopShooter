@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C930B3531B37554400027C2F /* zoop_green.png in Resources */ = {isa = PBXBuildFile; fileRef = C930B3501B37554400027C2F /* zoop_green.png */; };
+		C930B3541B37554400027C2F /* zoop_orange.png in Resources */ = {isa = PBXBuildFile; fileRef = C930B3511B37554400027C2F /* zoop_orange.png */; };
+		C930B3551B37554400027C2F /* zoop_yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = C930B3521B37554400027C2F /* zoop_yellow.png */; };
 		C93980331B1910DD00EC448A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C93980321B1910DD00EC448A /* main.m */; };
 		C93980361B1910DD00EC448A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C93980351B1910DD00EC448A /* AppDelegate.m */; };
 		C93980391B1910DD00EC448A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C93980381B1910DD00EC448A /* ViewController.m */; };
@@ -30,6 +33,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C930B3501B37554400027C2F /* zoop_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoop_green.png; sourceTree = "<group>"; };
+		C930B3511B37554400027C2F /* zoop_orange.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoop_orange.png; sourceTree = "<group>"; };
+		C930B3521B37554400027C2F /* zoop_yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoop_yellow.png; sourceTree = "<group>"; };
 		C939802D1B1910DD00EC448A /* ZoopShooter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZoopShooter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C93980311B1910DD00EC448A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C93980321B1910DD00EC448A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -69,6 +75,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C930B3561B37555000027C2F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C930B3501B37554400027C2F /* zoop_green.png */,
+				C930B3511B37554400027C2F /* zoop_orange.png */,
+				C930B3521B37554400027C2F /* zoop_yellow.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		C93980241B1910DD00EC448A = {
 			isa = PBXGroup;
 			children = (
@@ -102,6 +118,7 @@
 				C939805C1B19144F00EC448A /* GameScene.m */,
 				C939803D1B1910DD00EC448A /* Images.xcassets */,
 				C939803F1B1910DD00EC448A /* LaunchScreen.xib */,
+				C930B3561B37555000027C2F /* Resources */,
 				C93980301B1910DD00EC448A /* Supporting Files */,
 			);
 			path = ZoopShooter;
@@ -214,6 +231,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				C939803C1B1910DD00EC448A /* Main.storyboard in Resources */,
+				C930B3541B37554400027C2F /* zoop_orange.png in Resources */,
+				C930B3531B37554400027C2F /* zoop_green.png in Resources */,
+				C930B3551B37554400027C2F /* zoop_yellow.png in Resources */,
 				C93980411B1910DD00EC448A /* LaunchScreen.xib in Resources */,
 				C939803E1B1910DD00EC448A /* Images.xcassets in Resources */,
 			);
@@ -434,6 +454,7 @@
 				C93980521B1910DD00EC448A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C93980531B1910DD00EC448A /* Build configuration list for PBXNativeTarget "ZoopShooterTests" */ = {
 			isa = XCConfigurationList;
@@ -442,6 +463,7 @@
 				C93980551B1910DD00EC448A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
