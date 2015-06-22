@@ -27,7 +27,6 @@ static const u_int32_t kCannonCategory  = 0x1 << 2;
     
     if (!_tapRecognizer) {
         _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
-        _tapRecognizer.numberOfTapsRequired = 2;
         [[self view] addGestureRecognizer:_tapRecognizer];
     }
     return _tapRecognizer;
@@ -59,8 +58,6 @@ static const u_int32_t kCannonCategory  = 0x1 << 2;
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-    
-    NSLog(@"%@", NSStringFromSelector(_cmd));
     
     if (touches.count != 1)
         return;
@@ -105,7 +102,6 @@ static const u_int32_t kCannonCategory  = 0x1 << 2;
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     
-    NSLog(@"%@", NSStringFromSelector(_cmd));
 }
 
 - (void)didSimulatePhysics {
@@ -153,20 +149,11 @@ static const u_int32_t kCannonCategory  = 0x1 << 2;
 
 - (void)handleTap:(UITapGestureRecognizer *)sender {
     
-    NSLog(@"%@", NSStringFromSelector(_cmd));
-    
     // Total hack.
     if (self.moving) {
         self.moving = NO;
         return;
     }
-    
-    // Only fire cannon if tapped on cannon.
-//    CGPoint location = [sender locationInView:sender.view];
-//    location = [self convertPointFromView:location];
-//    SKShapeNode *cannon = (SKShapeNode *)[self childNodeWithName:@"cannon"];
-//    if (![cannon containsPoint:location])
-//        return;
     
     [self fireCannon];
 }
@@ -268,7 +255,7 @@ static inline CGFloat skRand(CGFloat low, CGFloat high) {
     enemy.position = CGPointMake(-40.0, y);
     [self addChild:enemy];
     
-    CGFloat d = skRand(7.0, 10.0);
+    CGFloat d = skRand(7.0, 12.0);
     SKAction *sequence = [SKAction sequence:@[
                                               [SKAction moveToX:self.size.width + 40 duration:d],
                                               [SKAction moveToX:-40 duration:d]]];
@@ -276,9 +263,8 @@ static inline CGFloat skRand(CGFloat low, CGFloat high) {
     [enemy runAction:repeat];
 }
 
-- (SKShapeNode *)newEnemy {
-    
-//    SKShapeNode *enemy = [SKShapeNode shapeNodeWithRectOfSize:CGSizeMake(40.0, 40.0)];
+- (SKNode *)newEnemy {
+
     CGFloat r = skRand(0.0, 100.0);
     NSString *image;
     if (r < 33.0) {
@@ -291,8 +277,6 @@ static inline CGFloat skRand(CGFloat low, CGFloat high) {
     
     SKSpriteNode *enemy = [SKSpriteNode spriteNodeWithImageNamed:image];
     enemy.size = CGSizeMake(40.0, 40.0);
-//    enemy.fillColor = [SKColor yellowColor];
-//    enemy.strokeColor = [SKColor yellowColor];
     enemy.physicsBody.dynamic = YES;
     enemy.physicsBody.affectedByGravity = NO;
     enemy.physicsBody.restitution = 0.0;
