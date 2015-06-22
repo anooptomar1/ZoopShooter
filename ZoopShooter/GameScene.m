@@ -13,6 +13,8 @@
 @property SKNode *cannon;
 @property CGPoint startingPoint;
 @property BOOL canFire;
+@property (strong, nonatomic) UITapGestureRecognizer *tapRecognizer;
+@property BOOL moving;
 @end
 
 static const u_int32_t kMissileCategory = 0x1 << 0;
@@ -20,6 +22,16 @@ static const u_int32_t kEnemyCategory   = 0x1 << 1;
 static const u_int32_t kCannonCategory  = 0x1 << 2;
 
 @implementation GameScene
+
+- (UITapGestureRecognizer *)tapRecognizer {
+    
+    if (!_tapRecognizer) {
+        _tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+        _tapRecognizer.numberOfTapsRequired = 2;
+        [[self view] addGestureRecognizer:_tapRecognizer];
+    }
+    return _tapRecognizer;
+}
 
 - (void)didMoveToView:(SKView *)view {
     
@@ -48,11 +60,15 @@ static const u_int32_t kCannonCategory  = 0x1 << 2;
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     
+    NSLog(@"%@", NSStringFromSelector(_cmd));
+    
     if (touches.count != 1)
         return;
     
     if ([self.cannon hasActions])
         return;
+    
+    self.moving = YES;
     
     UITouch *touch = [touches anyObject];
     CGPoint location = [touch locationInNode:self];
@@ -85,6 +101,11 @@ static const u_int32_t kCannonCategory  = 0x1 << 2;
     
     // Save location for next touchesMoved event.
     self.startingPoint = location;
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    
+    NSLog(@"%@", NSStringFromSelector(_cmd));
 }
 
 - (void)didSimulatePhysics {
@@ -132,32 +153,22 @@ static const u_int32_t kCannonCategory  = 0x1 << 2;
 
 - (void)handleTap:(UITapGestureRecognizer *)sender {
     
-    // Only fire cannon if cannon is loaded.
-    if (!self.canFire)
-        return;
-
-    // Only fire cannon if tapped on cannon.
-    CGPoint location = [sender locationInView:sender.view];
-    location = [self convertPointFromView:location];
-    SKShapeNode *cannon = (SKShapeNode *)[self childNodeWithName:@"cannon"];
-    if (![cannon containsPoint:location])
-        return;
+    NSLog(@"%@", NSStringFromSelector(_cmd));
     
-    // Need to correct angle by PI/2 for some unknown reason.
-    CGFloat angle = self.cannon.zRotation + M_PI_2;
-    // Get new missile.
-    SKShapeNode *missile = [self newMissile];
-    // Calculate missile position as point on circle at appropriate angle.
-    CGFloat x = self.cannon.position.x + self.cannon.frame.size.width/2 * cos(angle);
-    CGFloat y = self.cannon.position.y + self.cannon.frame.size.height/2 * sin(angle);
-    missile.position = CGPointMake(x, y);
-    // Add missile to scene.
-    [self addChild:missile];
-    // Fire missile (apply impulse to it).
-    [missile.physicsBody applyImpulse:CGVectorMake(500 * cos(angle), 500 * sin(angle))];
-    // Reload cannon.
-    SKAction *cannonReloadSequence = [self getCannonReloadSequence];
-    [self runAction:cannonReloadSequence];
+    // Total hack.
+    if (self.moving) {
+        self.moving = NO;
+        return;
+    }
+    
+    // Only fire cannon if tapped on cannon.
+//    CGPoint location = [sender locationInView:sender.view];
+//    location = [self convertPointFromView:location];
+//    SKShapeNode *cannon = (SKShapeNode *)[self childNodeWithName:@"cannon"];
+//    if (![cannon containsPoint:location])
+//        return;
+    
+    [self fireCannon];
 }
 
 - (void)createSceneContents {
@@ -287,7 +298,7 @@ static inline CGFloat skRand(CGFloat low, CGFloat high) {
     enemy.physicsBody.restitution = 0.0;
     enemy.physicsBody.linearDamping = 0.0;
     enemy.physicsBody.angularDamping = 0.0;
-    enemy.physicsBody.mass = 1;
+    enemy.physicsBody.mass = 10;
     enemy.name = @"enemy";
     enemy.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:CGSizeMake(40.0, 40.0)];
     
@@ -299,6 +310,29 @@ static inline CGFloat skRand(CGFloat low, CGFloat high) {
     return enemy;
 }
 
+- (void)fireCannon {
+    
+    // Only fire cannon if cannon is loaded.
+    if (!self.canFire)
+        return;
+    
+    // Need to correct angle by PI/2 for some unknown reason.
+    CGFloat angle = self.cannon.zRotation + M_PI_2;
+    // Get new missile.
+    SKShapeNode *missile = [self newMissile];
+    // Calculate missile position as point on circle at appropriate angle.
+    CGFloat x = self.cannon.position.x + self.cannon.frame.size.width/2 * cos(angle);
+    CGFloat y = self.cannon.position.y + self.cannon.frame.size.height/2 * sin(angle);
+    missile.position = CGPointMake(x, y);
+    // Add missile to scene.
+    [self addChild:missile];
+    // Fire missile (apply impulse to it).
+    [missile.physicsBody applyImpulse:CGVectorMake(500 * cos(angle), 500 * sin(angle))];
+    // Reload cannon.
+    SKAction *cannonReloadSequence = [self getCannonReloadSequence];
+    [self runAction:cannonReloadSequence];
+}
+
 - (SKAction *)getCannonReloadSequence {
     
     SKAction *cannonReloadSequence = [SKAction sequence:@[
@@ -308,7 +342,7 @@ static inline CGFloat skRand(CGFloat low, CGFloat high) {
         [cannon setStrokeColor:[SKColor blackColor]];
         self.canFire = NO;
     }],
-                                                  [SKAction waitForDuration:0.5],
+                                                  [SKAction waitForDuration:0.25],
                                                   [SKAction runBlock:^{
         SKShapeNode *cannon = (SKShapeNode *)self.cannon;
         [cannon setFillColor:[SKColor grayColor]];
