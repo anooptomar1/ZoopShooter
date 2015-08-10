@@ -9,12 +9,12 @@
 #import "GameScene.h"
 
 @interface GameScene ()
-@property BOOL contentCreated;
-@property SKNode *cannon;
-@property CGPoint startingPoint;
 @property BOOL canFire;
-@property (strong, nonatomic) UITapGestureRecognizer *tapRecognizer;
+@property BOOL contentCreated;
 @property BOOL moving;
+@property CGPoint startingPoint;
+@property (strong, nonatomic) SKNode *cannon;
+@property (strong, nonatomic) UITapGestureRecognizer *tapRecognizer;
 @end
 
 static const u_int32_t kMissileCategory = 0x1 << 0;
