@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C930B3531B37554400027C2F /* zoop_green.png in Resources */ = {isa = PBXBuildFile; fileRef = C930B3501B37554400027C2F /* zoop_green.png */; };
-		C930B3541B37554400027C2F /* zoop_orange.png in Resources */ = {isa = PBXBuildFile; fileRef = C930B3511B37554400027C2F /* zoop_orange.png */; };
-		C930B3551B37554400027C2F /* zoop_yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = C930B3521B37554400027C2F /* zoop_yellow.png */; };
 		C93980331B1910DD00EC448A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C93980321B1910DD00EC448A /* main.m */; };
 		C93980361B1910DD00EC448A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C93980351B1910DD00EC448A /* AppDelegate.m */; };
 		C93980391B1910DD00EC448A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C93980381B1910DD00EC448A /* ViewController.m */; };
@@ -20,6 +17,10 @@
 		C93980571B1910ED00EC448A /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C93980561B1910ED00EC448A /* SpriteKit.framework */; };
 		C939805A1B19123200EC448A /* StartScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = C93980591B19123200EC448A /* StartScreen.m */; };
 		C939805D1B19144F00EC448A /* GameScene.m in Sources */ = {isa = PBXBuildFile; fileRef = C939805C1B19144F00EC448A /* GameScene.m */; };
+		C95F43D11D17126A00FDCF8A /* zoop1.png in Resources */ = {isa = PBXBuildFile; fileRef = C95F43CD1D17126A00FDCF8A /* zoop1.png */; };
+		C95F43D21D17126A00FDCF8A /* zoop2.png in Resources */ = {isa = PBXBuildFile; fileRef = C95F43CE1D17126A00FDCF8A /* zoop2.png */; };
+		C95F43D31D17126A00FDCF8A /* zoop3.png in Resources */ = {isa = PBXBuildFile; fileRef = C95F43CF1D17126A00FDCF8A /* zoop3.png */; };
+		C95F43D41D17126A00FDCF8A /* zoop4.png in Resources */ = {isa = PBXBuildFile; fileRef = C95F43D01D17126A00FDCF8A /* zoop4.png */; };
 		C9CE8BFE1B7833960037A143 /* screenshot1.png in Resources */ = {isa = PBXBuildFile; fileRef = C9CE8BFC1B7833960037A143 /* screenshot1.png */; };
 		C9CE8BFF1B7833960037A143 /* screenshot2.png in Resources */ = {isa = PBXBuildFile; fileRef = C9CE8BFD1B7833960037A143 /* screenshot2.png */; };
 /* End PBXBuildFile section */
@@ -35,9 +36,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		C930B3501B37554400027C2F /* zoop_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoop_green.png; sourceTree = "<group>"; };
-		C930B3511B37554400027C2F /* zoop_orange.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoop_orange.png; sourceTree = "<group>"; };
-		C930B3521B37554400027C2F /* zoop_yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoop_yellow.png; sourceTree = "<group>"; };
 		C939802D1B1910DD00EC448A /* ZoopShooter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZoopShooter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C93980311B1910DD00EC448A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C93980321B1910DD00EC448A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -56,6 +54,10 @@
 		C93980591B19123200EC448A /* StartScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartScreen.m; sourceTree = "<group>"; };
 		C939805B1B19144F00EC448A /* GameScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameScene.h; sourceTree = "<group>"; };
 		C939805C1B19144F00EC448A /* GameScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameScene.m; sourceTree = "<group>"; };
+		C95F43CD1D17126A00FDCF8A /* zoop1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoop1.png; sourceTree = "<group>"; };
+		C95F43CE1D17126A00FDCF8A /* zoop2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoop2.png; sourceTree = "<group>"; };
+		C95F43CF1D17126A00FDCF8A /* zoop3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoop3.png; sourceTree = "<group>"; };
+		C95F43D01D17126A00FDCF8A /* zoop4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoop4.png; sourceTree = "<group>"; };
 		C9CE8BFC1B7833960037A143 /* screenshot1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = screenshot1.png; sourceTree = "<group>"; };
 		C9CE8BFD1B7833960037A143 /* screenshot2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = screenshot2.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -84,9 +86,10 @@
 			children = (
 				C9CE8BFC1B7833960037A143 /* screenshot1.png */,
 				C9CE8BFD1B7833960037A143 /* screenshot2.png */,
-				C930B3501B37554400027C2F /* zoop_green.png */,
-				C930B3511B37554400027C2F /* zoop_orange.png */,
-				C930B3521B37554400027C2F /* zoop_yellow.png */,
+				C95F43CD1D17126A00FDCF8A /* zoop1.png */,
+				C95F43CE1D17126A00FDCF8A /* zoop2.png */,
+				C95F43CF1D17126A00FDCF8A /* zoop3.png */,
+				C95F43D01D17126A00FDCF8A /* zoop4.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -237,12 +240,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				C939803C1B1910DD00EC448A /* Main.storyboard in Resources */,
-				C930B3541B37554400027C2F /* zoop_orange.png in Resources */,
+				C95F43D31D17126A00FDCF8A /* zoop3.png in Resources */,
+				C95F43D21D17126A00FDCF8A /* zoop2.png in Resources */,
+				C95F43D41D17126A00FDCF8A /* zoop4.png in Resources */,
 				C9CE8BFF1B7833960037A143 /* screenshot2.png in Resources */,
-				C930B3531B37554400027C2F /* zoop_green.png in Resources */,
-				C930B3551B37554400027C2F /* zoop_yellow.png in Resources */,
 				C93980411B1910DD00EC448A /* LaunchScreen.xib in Resources */,
 				C939803E1B1910DD00EC448A /* Images.xcassets in Resources */,
+				C95F43D11D17126A00FDCF8A /* zoop1.png in Resources */,
 				C9CE8BFE1B7833960037A143 /* screenshot1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

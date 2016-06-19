@@ -267,12 +267,14 @@ static inline CGFloat skRand(CGFloat low, CGFloat high) {
 
     CGFloat r = skRand(0.0, 100.0);
     NSString *image;
-    if (r < 33.0) {
-        image = @"zoop_green.png";
-    } else if (r < 66.0) {
-        image = @"zoop_orange.png";
+    if (r < 25.0) {
+        image = @"zoop1.png";
+    } else if (r < 50.0) {
+        image = @"zoop2.png";
+    } else if (r < 75.0) {
+        image = @"zoop3.png";
     } else {
-        image = @"zoop_yellow.png";
+        image = @"zoop4.png";
     }
     
     SKSpriteNode *enemy = [SKSpriteNode spriteNodeWithImageNamed:image];
